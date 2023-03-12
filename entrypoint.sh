@@ -12,3 +12,4 @@ python manage.py loaddata fixtures/mems_dump.json
 #
 ##celery -A app worker -l INFO &
 gunicorn --bind 0.0.0.0:8000 webgis.wsgi:application
+#python3 manage.py runserver
