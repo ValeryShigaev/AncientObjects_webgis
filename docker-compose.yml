@@ -1,0 +1,35 @@
+version: '3.9'
+services:
+   db:
+    container_name: db
+    image: kartoza/postgis:15-3.3
+    ports:
+      - "5433:5433"
+    expose:
+      - 5433
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgresadmin7
+      - POSTGRES_DB=db
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
+   web:
+     container_name: web
+     build: ./
+     command: bash ./entrypoint.sh
+     ports:
+       - "8000:8000"
+     expose:
+       - 8000
+     volumes:
+       - ./app/static:/usr/src/app/webgis/static
+       - ./app/media:/usr/src/app/webgis/media
+     env_file:
+       - ./.env
+     depends_on:
+       - db
+volumes:
+  postgres_data:
+
