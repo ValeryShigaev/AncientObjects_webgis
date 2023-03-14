@@ -20,8 +20,8 @@ services:
      expose:
        - 8000
      volumes:
-       - ./app/static:/usr/src/app/webgis/static
-       - ./app/media:/usr/src/app/webgis/media
+       - ./webgis/static:/usr/src/app/webgis/static
+       - ./webgis/media:/usr/src/app/webgis/media
      env_file:
        - ./.env
      depends_on:
