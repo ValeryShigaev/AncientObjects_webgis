@@ -1,0 +1,16 @@
+FROM node:12.2.0-alpine
+
+WORKDIR /usr/src/app
+
+ENV PATH /usr/src/app/webgis/frontend/node_modules/.bin:$PATH
+
+RUN npm install
+RUN npm install @vue/cli@3.7.0 -g
+
+COPY ./entrypointWeb.sh .
+
+COPY . .
+
+RUN cd webgis/frontend
+
+CMD ["npm", "run", "dev"]
