@@ -7,19 +7,11 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
+    {% verbatim %}
     <div id="app" class="container">
         {{ message }}
     </div>
+    {% endverbatim %}
 </body>
-<!--<script src="{% static 'scripts/main.js' %}"></script>-->
-<script>
-  const { createApp } = Vue
-  createApp({
-    data() {
-      return {
-        message: 'Hello Vue!'
-      }
-    }
-  }).mount('#app')
-</script>
+    <script src="{% static 'scripts/app_map.js' %}"></script>
 </html>

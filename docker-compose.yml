@@ -11,11 +11,9 @@ services:
       - POSTGRES_DB=map_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgresadmin7
-   api:
-     container_name: api
-     build:
-       context: ./
-       dockerfile: Dockerfile
+   web:
+     container_name: web
+     build: .
      command: bash ./entrypoint.sh
      ports:
        - "8000:8000"
@@ -28,16 +26,7 @@ services:
        - ./.env
      depends_on:
        - db
-   web:
-     container_name: web
-     build:
-       context: ./
-       dockerfile: WebDockerfile
-#     command: bash ./entrypointWeb.sh
-     ports:
-       - "8082:8080"
-     depends_on:
-       - api
 volumes:
   postgres_data:
+
 
