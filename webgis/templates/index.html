@@ -4,12 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Map</title>
+    <link rel="stylesheet" href="{% static 'styles/app_map.css' %}">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
     {% verbatim %}
     <div id="app" class="container">
-        {{ message }}
+        <div
+         v-if: loading
+         class="loading_container"
+        >
+            Loading
+        </div>
     </div>
     {% endverbatim %}
 </body>
