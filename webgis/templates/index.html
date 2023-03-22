@@ -10,12 +10,17 @@
 <body>
     {% verbatim %}
     <div id="app" class="container">
-        <div
-         v-if: loading
-         class="loading_container"
-        >
-            Loading
-        </div>
+        <template
+         v-if="loading"
+         >
+            <div class="loading_container">
+                <span class="preloader__item preloader__item1"></span>
+                <span class="preloader__item preloader__item2"></span>
+                <span class="preloader__item preloader__item3"></span>
+                <span class="preloader__item preloader__item4"></span>
+            </div>
+        </template>
+        
     </div>
     {% endverbatim %}
 </body>
