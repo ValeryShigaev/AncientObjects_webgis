@@ -4,22 +4,75 @@
 <head>
     <meta charset="UTF-8">
     <title>Map</title>
+    <link rel="stylesheet" href="//unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="{% static 'styles/app_map.css' %}">
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!--<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+    <script src="//unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="//unpkg.com/vue2-leaflet"></script>
 </head>
 <body>
     {% verbatim %}
     <div id="app" class="container">
-        <template
-         v-if="loading"
-         >
-            <div class="loading_container">
-                <span class="preloader__item preloader__item1"></span>
-                <span class="preloader__item preloader__item2"></span>
-                <span class="preloader__item preloader__item3"></span>
-                <span class="preloader__item preloader__item4"></span>
+        <div class="gis_menu">
+            <div class="filters_container">
+                {{ tileProviders }}
             </div>
-        </template>
+            <div class="map">
+                <div v-for="(tileProvider, index) in tileProviders">
+                    {{tileProvider.name}}
+                </div>
+                <template>
+                    <l-map style="height: 700px" :zoom="zoom" :center="center">
+                      <l-tile-layer
+                       v-for="(tileProvider, index) in tileProviders"
+                       :visible="tileProvider.visible"
+                       :key="tileProvider.id"
+                       :z-index="index"
+                       :name="tileProvider.name"
+                       :url="tileProvider.url"
+                       :subdomains="tileProvider.subdomains"
+                       
+                       ></l-tile-layer>
+                      <l-geo-json
+                            :show="showMarkers"
+                            :geojson="geojson"
+                            :options="options"
+                            :options-style="styleFunction"
+                       ></l-geo-json>
+                    </l-map>
+                </template>
+                <div class="swither_contaner">
+                    {{ tile }}
+                    <input
+                     v-model="tile"
+                     value="goo"
+                     type="radio" 
+                     name="tile"
+                     >
+                    <label>Google sattelite hybrid</label>
+                    <input
+                     v-model="tile"
+                     value="osm"
+                     type="radio" 
+                     name="tile" 
+                     checked>
+                   <label>Open street map</label>
+                </div>
+                <template
+                 v-if="loading"
+                 >
+                    <div class="loading_container">
+                        <span class="preloader__item preloader__item1"></span>
+                        <span class="preloader__item preloader__item2"></span>
+                        <span class="preloader__item preloader__item3"></span>
+                        <span class="preloader__item preloader__item4"></span>
+                    </div>
+                </template>
+            </div>
+            
+        </div>
+        
         
     </div>
     {% endverbatim %}
