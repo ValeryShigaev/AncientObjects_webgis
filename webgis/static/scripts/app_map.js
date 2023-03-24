@@ -13,6 +13,8 @@ var vm = new Vue({
   },
   data() {
     return {
+      zoom: 7,
+      center: [55.527612, 51.387796],
       loading: false,
       showMarkers: true,
       geojson: null,
@@ -25,8 +27,7 @@ var vm = new Vue({
         popupAnchor:  [1, -24],
         iconUrl: '../static/images/marker-icon.png',
       }),
-      zoom: 7,
-      center: [53.164677, 50.407340],
+      types: [],
     }
   },
   methods: {
@@ -39,7 +40,16 @@ var vm = new Vue({
         { permanent: false, sticky: true }
       );
     },
-
+    getTypes(points){
+      const result = []
+      points.features.forEach(element => {
+        if (!result.includes(element.properties.type)){
+          result.push(element.properties.type)
+        }
+      });
+      return result;
+    },
+    
   },
   computed: {
     options() {
@@ -63,7 +73,10 @@ var vm = new Vue({
     this.loading = true;
     const response = await fetch("/api/objects/");
     const data = await response.json();
-    this.geojson = data;
+    localStorage.setItem("points", JSON.stringify(data));
+    this.geojson = JSON.parse(localStorage.getItem("points"));
+    console.log(JSON.stringify(this.geojson))
+    this.types = this.getTypes(this.geojson);
     this.loading = false;
   }
 })

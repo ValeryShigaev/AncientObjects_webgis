@@ -22,47 +22,14 @@
                 <h5>
                     Type:
                 </h5>
-                <div class="filters_item">
-                    <input class="menu_item_fields_field_check_type" type="checkbox" id="курган" name="курган">
-                    <label class="menu_item_fields_field_label" for="курган"> курган </label>
+                <div
+                 v-for="type in types"
+                 :key="type"
+                 class="filters_item"
+                 >
+                    <input class="menu_item_fields_field_check_type" type="checkbox" :id="type" :name="type">
+                    <label class="menu_item_fields_field_label" :for="type"> {{ type }} </label>
                 </div>
-                <div class="filters_item">
-                    <input class="menu_item_fields_field_check_type" type="checkbox" id="курганная группа" name="курганная группа">
-                    <label class="menu_item_fields_field_label" for="курганная группа"> курганная группа </label>
-                </div>
-                <div class="filters_item">
-                    <input class="menu_item_fields_field_check_type" type="checkbox" id="могильник" name="могильник">
-                    <label class="menu_item_fields_field_label" for="могильник"> могильник </label>
-                </div>
-                <div class="filters_item">
-                    <input class="menu_item_fields_field_check_type" type="checkbox" id="городище" name="городище">
-                    <label class="menu_item_fields_field_label" for="городище"> городище </label>
-                </div>
-                <div class="filters_item">
-                    <input class="menu_item_fields_field_check_type" type="checkbox" id="селище" name="селище">
-                    <label class="menu_item_fields_field_label" for="селище"> селище </label>
-                </div>
-                <div class="filters_item">
-                    <input class="menu_item_fields_field_check_type" type="checkbox" id="стоянка" name="стоянка">
-                    <label class="menu_item_fields_field_label" for="стоянка"> стоянка </label>
-                </div>
-                <div class="filters_item">
-                    <input class="menu_item_fields_field_check_type" type="checkbox" id="местонахождение" name="местонахождение">
-                    <label class="menu_item_fields_field_label" for="местонахождение"> местонахождение </label>
-                </div>
-                <div class="filters_item">
-                    <input class="menu_item_fields_field_check_type" type="checkbox" id="выработки" name="выработки">
-                    <label class="menu_item_fields_field_label" for="выработки"> выработки </label>
-                </div>
-                <div class="filters_item">
-                    <input class="menu_item_fields_field_check_type" type="checkbox" id="пещера" name="пещера">
-                    <label class="menu_item_fields_field_label" for="пещера"> пещера </label>
-                </div>
-                <div class="filters_item">
-                    <input class="menu_item_fields_field_check_type" type="checkbox" id="раскопан" name="раскопан">
-                    <label class="menu_item_fields_field_label" for="раскопан"> раскопан </label>
-                </div>
-
             </div>
             <div class="map">
                 <template>
