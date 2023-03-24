@@ -1,4 +1,3 @@
-
 const osm_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const goo_url = 'http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}';
 const osm_subd = null
@@ -18,25 +17,8 @@ var vm = new Vue({
       showMarkers: true,
       geojson: null,
       tile: 'osm',
-      tileProviders: [
-        {
-          id: 1,
-          name: 'Google',
-          url: 'http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',
-          attribution: '&copy; <a href=\'http://www.openstreetmap.org/copyright\'>OpenStreetMap</a> &copy; <a href=\'https://carto.com/attributions\'>CARTO</a>',
-          subdomains: ['mt0','mt1','mt2','mt3'],
-          visible:true
-          
-        },
-        {
-          id: 2,
-          name: 'OSM',
-          url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          attribution: '&copy; <a href=\'http://www.openstreetmap.org/copyright\'>OpenStreetMap</a> &copy; <a href=\'https://carto.com/attributions\'>CARTO</a>',
-          subdomains: null,
-          visible:false
-        }
-      ],
+      osm: true,
+      google: false,
       icon: icon({
         iconSize: [20, 20],
         iconAnchor: [13, 27],
@@ -55,7 +37,7 @@ var vm = new Vue({
           feature.properties.name +
           "</div>",
         { permanent: false, sticky: true }
-      );   
+      );
     },
 
   },
@@ -65,19 +47,16 @@ var vm = new Vue({
         onEachFeature: this.onEachFeatureFunction,
       };
     },
-    styleFunction() {
-      return () => {
-        return {
-        };
-      };
-    },
-    
   },
   watch: {
     tile() {
-      this.tileProviders.reverse();
-      this.tileProviders[0].visible = true;
-      this.tileProviders[1].visible = false;
+      if (this.tile == 'osm'){
+        this.osm = true;
+        this.google = false;
+      }else{
+        this.osm = false;
+        this.google = true;
+      }
     }
   },
   async created() {

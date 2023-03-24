@@ -16,48 +16,95 @@
     <div id="app" class="container">
         <div class="gis_menu">
             <div class="filters_container">
-                {{ tileProviders }}
+                <h4>
+                    Filters:
+                </h4>
+                <h5>
+                    Type:
+                </h5>
+                <div class="filters_item">
+                    <input class="menu_item_fields_field_check_type" type="checkbox" id="курган" name="курган">
+                    <label class="menu_item_fields_field_label" for="курган"> курган </label>
+                </div>
+                <div class="filters_item">
+                    <input class="menu_item_fields_field_check_type" type="checkbox" id="курганная группа" name="курганная группа">
+                    <label class="menu_item_fields_field_label" for="курганная группа"> курганная группа </label>
+                </div>
+                <div class="filters_item">
+                    <input class="menu_item_fields_field_check_type" type="checkbox" id="могильник" name="могильник">
+                    <label class="menu_item_fields_field_label" for="могильник"> могильник </label>
+                </div>
+                <div class="filters_item">
+                    <input class="menu_item_fields_field_check_type" type="checkbox" id="городище" name="городище">
+                    <label class="menu_item_fields_field_label" for="городище"> городище </label>
+                </div>
+                <div class="filters_item">
+                    <input class="menu_item_fields_field_check_type" type="checkbox" id="селище" name="селище">
+                    <label class="menu_item_fields_field_label" for="селище"> селище </label>
+                </div>
+                <div class="filters_item">
+                    <input class="menu_item_fields_field_check_type" type="checkbox" id="стоянка" name="стоянка">
+                    <label class="menu_item_fields_field_label" for="стоянка"> стоянка </label>
+                </div>
+                <div class="filters_item">
+                    <input class="menu_item_fields_field_check_type" type="checkbox" id="местонахождение" name="местонахождение">
+                    <label class="menu_item_fields_field_label" for="местонахождение"> местонахождение </label>
+                </div>
+                <div class="filters_item">
+                    <input class="menu_item_fields_field_check_type" type="checkbox" id="выработки" name="выработки">
+                    <label class="menu_item_fields_field_label" for="выработки"> выработки </label>
+                </div>
+                <div class="filters_item">
+                    <input class="menu_item_fields_field_check_type" type="checkbox" id="пещера" name="пещера">
+                    <label class="menu_item_fields_field_label" for="пещера"> пещера </label>
+                </div>
+                <div class="filters_item">
+                    <input class="menu_item_fields_field_check_type" type="checkbox" id="раскопан" name="раскопан">
+                    <label class="menu_item_fields_field_label" for="раскопан"> раскопан </label>
+                </div>
+
             </div>
             <div class="map">
-                <div v-for="(tileProvider, index) in tileProviders">
-                    {{tileProvider.name}}
-                </div>
                 <template>
                     <l-map style="height: 700px" :zoom="zoom" :center="center">
-                      <l-tile-layer
-                       v-for="(tileProvider, index) in tileProviders"
-                       :visible="tileProvider.visible"
-                       :key="tileProvider.id"
-                       :z-index="index"
-                       :name="tileProvider.name"
-                       :url="tileProvider.url"
-                       :subdomains="tileProvider.subdomains"
-                       
+                       <l-tile-layer
+                       :visible="osm"
+                       :url="'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'"
+                       ></l-tile-layer>
+                       <l-tile-layer
+                       :visible="google"
+                       :url="'http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}'"
+                       :subdomains="['mt0','mt1','mt2','mt3']"
                        ></l-tile-layer>
                       <l-geo-json
                             :show="showMarkers"
                             :geojson="geojson"
                             :options="options"
-                            :options-style="styleFunction"
                        ></l-geo-json>
                     </l-map>
                 </template>
                 <div class="swither_contaner">
-                    {{ tile }}
-                    <input
-                     v-model="tile"
-                     value="goo"
-                     type="radio" 
-                     name="tile"
-                     >
-                    <label>Google sattelite hybrid</label>
-                    <input
-                     v-model="tile"
-                     value="osm"
-                     type="radio" 
-                     name="tile" 
-                     checked>
-                   <label>Open street map</label>
+                    <div class="swither_elem">
+                        <input
+                         class="switcher_button"
+                         v-model="tile"
+                         value="osm"
+                         type="radio"
+                         name="tile"
+                         checked
+                         >
+                        <label>Open street map</label>
+                    </div>
+                    <div class="swither_elem">
+                        <input
+                         class="switcher_button"
+                         v-model="tile"
+                         value="goo"
+                         type="radio"
+                         name="tile"
+                        >
+                        <label>Google sattelite hybrid</label>
+                    </div>
                 </div>
                 <template
                  v-if="loading"
@@ -70,10 +117,8 @@
                     </div>
                 </template>
             </div>
-            
+
         </div>
-        
-        
     </div>
     {% endverbatim %}
 </body>
