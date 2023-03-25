@@ -28,9 +28,16 @@ var vm = new Vue({
         iconUrl: '../static/images/marker-icon.png',
       }),
       types: [],
+      filterValues: []
     }
   },
   methods: {
+    pushToFilterValues(value){
+      if(!this.filterValues.includes(value)){
+        this.filterValues.push(value);
+        console.log(this.filterValues);
+      }
+    },
     onEachFeatureFunction(feature, layer) {
       layer.setIcon(this.icon);
       layer.bindTooltip(
@@ -67,6 +74,18 @@ var vm = new Vue({
         this.osm = false;
         this.google = true;
       }
+    },
+    filterValues() {
+      if (!this.filterValues.length){
+        this.geojson = JSON.parse(localStorage.getItem("points"));
+      }else{
+        this.loading = true;
+        const features = JSON.parse(localStorage.getItem("points")).features;
+        const filteredFeatures = features.filter(element => this.filterValues.includes(element.properties.type));
+        this.geojson.features = filteredFeatures;
+        this.loading = false;
+      }
+      
     }
   },
   async created() {
@@ -75,7 +94,6 @@ var vm = new Vue({
     const data = await response.json();
     localStorage.setItem("points", JSON.stringify(data));
     this.geojson = JSON.parse(localStorage.getItem("points"));
-    console.log(JSON.stringify(this.geojson))
     this.types = this.getTypes(this.geojson);
     this.loading = false;
   }

@@ -16,10 +16,10 @@
     <div id="app" class="container">
         <div class="gis_menu">
             <div class="filters_container">
-                <h4>
+                <h4 class="filters_header">
                     Filters:
                 </h4>
-                <h5>
+                <h5 class="filters_header">
                     Type:
                 </h5>
                 <div
@@ -27,8 +27,8 @@
                  :key="type"
                  class="filters_item"
                  >
-                    <input class="menu_item_fields_field_check_type" type="checkbox" :id="type" :name="type">
-                    <label class="menu_item_fields_field_label" :for="type"> {{ type }} </label>
+                    <input v-model="filterValues" class="filters_checkbox" type="checkbox" :id="type" :value="type">
+                    <label class="filters_label" :for="type"> {{ type }} </label>
                 </div>
             </div>
             <div class="map">
@@ -71,6 +71,9 @@
                          name="tile"
                         >
                         <label>Google sattelite hybrid</label>
+                    </div>
+                    <div class="editor_container">
+                        
                     </div>
                 </div>
                 <template
