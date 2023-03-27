@@ -28,7 +28,13 @@ var vm = new Vue({
         iconUrl: '../static/images/marker-icon.png',
       }),
       types: [],
-      filterValues: []
+      filterValues: [],
+
+      createState: false,
+      moveState: false,
+      deleteState: false,
+      helpText: '',
+
     }
   },
   methods: {
@@ -86,7 +92,36 @@ var vm = new Vue({
         this.loading = false;
       }
       
-    }
+    },
+    createState(){
+      this.helpText = 'Click on the map';
+      if (this.createState){
+        this.moveState = false;
+        this.deleteState = false;
+        
+      }else{
+        this.helpText = '';
+      }
+    },
+    moveState(){
+      this.helpText = 'Click on the object';
+      if (this.moveState){
+        this.createState = false;
+        this.deleteState = false;
+        
+      }else{
+        this.helpText = '';
+      }
+    },
+    deleteState(){
+      this.helpText = 'Click on the object';
+      if (this.deleteState){
+        this.createState = false;
+        this.moveState = false;
+      }else{
+        this.helpText = '';
+      }
+    },
   },
   async created() {
     this.loading = true;

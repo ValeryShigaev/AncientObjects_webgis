@@ -50,6 +50,38 @@
                        ></l-geo-json>
                     </l-map>
                 </template>
+                <div class="editor_container">
+                    <ul class="edit_menu_buttons">
+                        <li
+                         class="edit_menu_buttons_cell">
+                            <input v-model="createState" type="checkbox" id="add" class="edit_check">
+                            <label for="add" class="edit_label">
+                                <div class="itool">
+                                    <span>Create</span>
+                                </div>
+                            </label>
+                        </li>
+                        <li class="edit_menu_buttons_cell">
+                            <input v-model="moveState" type="checkbox" id="move" class="move_check">
+                            <label for="move" class="move_label">
+                                <div class="itool">
+                                    <span>Move</span>
+                                </div>
+                            </label>
+                        </li>
+                        <li class="edit_menu_buttons_cell">
+                            <input v-model="deleteState" type="checkbox" id="delete" class="delete_check">
+                            <label for="delete" class="delete_label">
+                                <div class="itool">
+                                    <span>Delete</span>
+                                </div>
+                            </label>
+                        </li>
+                        <div v-if="helpText" class="help_text">
+                            {{ helpText }}
+                        </div>
+                    </ul>
+                </div>
                 <div class="swither_contaner">
                     <div class="swither_elem">
                         <input
@@ -72,10 +104,8 @@
                         >
                         <label>Google sattelite hybrid</label>
                     </div>
-                    <div class="editor_container">
-                        
-                    </div>
                 </div>
+                
                 <template
                  v-if="loading"
                  >
