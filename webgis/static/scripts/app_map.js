@@ -33,7 +33,8 @@ var vm = new Vue({
       createState: false,
       moveState: false,
       deleteState: false,
-      helpText: '',
+      helpText: "",
+      createForm: false,
 
     }
   },
@@ -47,7 +48,7 @@ var vm = new Vue({
     onEachFeatureFunction(feature, layer) {
       layer.setIcon(this.icon);
       layer.bindTooltip(
-        "<div>name:" +
+        "<div>" +
           feature.properties.name +
           "</div>",
         { permanent: false, sticky: true }
@@ -62,7 +63,11 @@ var vm = new Vue({
       });
       return result;
     },
-    
+    clickHandler(event){
+      if(this.createState){
+        this.createForm = true;
+      }
+    }
   },
   computed: {
     options() {
@@ -93,34 +98,28 @@ var vm = new Vue({
       }
       
     },
-    createState(){
-      this.helpText = 'Click on the map';
+    createState() {
       if (this.createState){
-        this.moveState = false;
-        this.deleteState = false;
-        
-      }else{
-        this.helpText = '';
+        this.moveState = false
+        this.deleteState = false
+        this.helpText = "Click on the map"
       }
     },
     moveState(){
-      this.helpText = 'Click on the object';
       if (this.moveState){
-        this.createState = false;
-        this.deleteState = false;
-        
-      }else{
-        this.helpText = '';
+        this.createState = false
+        this.deleteState = false
+        this.helpText = "Click on the object"
       }
+      
     },
     deleteState(){
-      this.helpText = 'Click on the object';
       if (this.deleteState){
-        this.createState = false;
-        this.moveState = false;
-      }else{
-        this.helpText = '';
+        this.createState = false
+        this.moveState = false
+        this.helpText = "Click on the object"
       }
+      
     },
   },
   async created() {
