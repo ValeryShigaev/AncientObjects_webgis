@@ -16,6 +16,9 @@
     <div id="app" class="container">
         <div class="gis_menu">
             <div class="filters_container">
+                <template v-if="serviceError">
+                    <span class="service_error"> {{ serviceError }} </span>
+                </template>
                 <h4 class="filters_header">
                     Filters:
                 </h4>
@@ -33,7 +36,7 @@
             </div>
             <div class="map">
                 <template>
-                    <l-map style="height: 700px" :zoom="zoom" :center="center" @click="clickHandler">
+                    <l-map style="height: 700px;" :zoom="zoom" :center="center" @click="clickHandler" ref="map">
                        <l-tile-layer
                        :visible="osm"
                        :url="'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'"
@@ -105,21 +108,70 @@
                         <label>Google sattelite hybrid</label>
                     </div>
                 </div>
+                <template v-if="createForm">
                 <div class="create_container">
-                    <form class="create_form">
-                        <input class="create_input" type="text" name="name">
-                        <input class="create_input" type="text" name="district">
-                        <select class="create_select" name="type">
-                            <option
-                             v-for="type in types"
-                             :value="type">{{ type }}</option>
-                        </select>
-                        <input class="create_input" type="text" name="av_order">
-                        <input class="create_input" type="text" name="notes">
-                        <input class="create_input" type="number" step="any" name="X">
-                        <input class="create_input" type="number" step="any" name="Y">
+                    <form class="create_form" @submit.prevent="submit" novalidate="true">
+                        <button
+                         @click="createForm = false, pointSelected = false, errors = []"
+                         class="create_close">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16"> 
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/> 
+                            </svg>
+                        </button>
+                        <template v-if="errors.length">
+                            <p class="create_row">
+                                <span class="error_header">Correct the errors below:</span>
+                                <ul class="error_list">
+                                    <li
+                                     v-for="error in errors"
+                                     :key="error"
+                                     class="error">
+                                    {{ error }}
+                                    </li>
+                                </ul>
+                            </p>
+
+                        </template>
+                        <p class="create_row">
+                            <label for="name">Name*:</label>
+                            <input class="create_input" type="text" v-model="form.name" name="name" required>
+                        </p>
+                        <p class="create_row">
+                            <label for="name">District:</label>
+                            <input class="create_input" type="text" v-model="form.district" name="district">
+                        </p>
+                        <p class="create_row">
+                            <label for="name">Type*:</label>
+                            <select class="create_select" name="type" id="type" v-model="form.type" required>
+                                <option
+                                 v-for="type in types"
+                                 :value="type">{{ type }}</option>
+                            </select>
+                        </p>
+                        <p class="create_row">
+                            <label for="name">Average order:</label>
+                            <input class="create_input" type="text" v-model="form.av_order" name="av_order">
+                        </p>
+                        <p class="create_row">
+                            <label for="name">Notes:</label>
+                            <input class="create_input" type="text" v-model="form.notes" name="notes">
+                        </p>
+                        <p class="create_row">
+                            <label for="name">X*:</label>
+                            <input
+                             v-model="clickLatLng.lat"
+                             class="create_input" type="number" step="any" name="X" required>
+                        </p>
+                        <p class="create_row">
+                            <label for="name">Y*:</label>
+                            <input
+                             v-model="clickLatLng.lng"
+                             class="create_input" type="number" step="any" name="Y" required>
+                        </p>
+                        <button class="create_submit" type="submit">Create</button>
                     </form>
                 </div>
+                </template>
                 <template
                  v-if="loading"
                  >

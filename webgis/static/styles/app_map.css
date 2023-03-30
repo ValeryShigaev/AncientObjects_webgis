@@ -1,12 +1,51 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200,900');
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 :root {
     --main-color: rgba(161, 255, 233, 1);
     --button-color: rgba(255, 153, 0, 1);
+    --select-border: var(--main-color);
+    --select-focus: blue;
+    --select-arrow: var(--select-border);
  }
+ html{
+    font-family: "Source Code Pro";
+ }
+ select{
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    padding: 0 1em 0 0;
+    margin: 0;
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+    outline: none;
+ }
+.leaflet-container.crosshair-cursor-enabled {
+    cursor:crosshair;
+}
 .container{
     margin: 0 auto;
     max-width: 1600px;
     padding: 20px 10px 0px 10px;
     box-sizing: border-box;
+}
+.font{
+    font-family: "Source Code Pro";
 }
 
 /* Preloader */
@@ -146,6 +185,7 @@
     align-items: flex-start;
     justify-content: center;
     padding-right: 10px;
+    position: relative;
 }
 .map{
     width: 80%;
@@ -153,7 +193,7 @@
 }
 .swither_contaner{
     position: absolute;
-    width: 200px;
+    width: 220px;
     height: 60px;
     background: white;
     top: 20px;
@@ -208,7 +248,7 @@
     height: 1em;
     flex-shrink: 0;
     flex-grow: 0;
-    border: 1px solid rgba(161, 255, 233, 1);
+    border: 1px solid var(--main-color);
     border-radius: 0.25em;
     margin-right: 0.5em;
     background-repeat: no-repeat;
@@ -273,7 +313,7 @@
     width: 100px;
     height: 20px;
     background: white;
-    border: 1px solid rgba(161, 255, 233, 1);
+    border: 1px solid var(--main-color);
     display: none;
     transition: all .2s linear;
     font-size: 12px;
@@ -366,7 +406,7 @@
     bottom: -55px;
     left: -20px;
     background: white;
-    border: 1px solid rgba(161, 255, 233, 1);
+    border: 1px solid var(--main-color);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -374,9 +414,109 @@
     font-size: 12px;
     padding: 5px 5px;
 }
+/* create form */
 .create_container{
     position: absolute;
     bottom: 20px;
     left: 5%;
     z-index: 510;
+}
+.create_form{
+    padding: 20px 10px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+}
+.create_row{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 4px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+.create_row:nth-child(:last-child){
+    margin-bottom: 10px;
+}
+.create_input{
+    height: 30px;
+    border: 1px solid var(--main-color);
+    cursor: pointer;
+    font-family: "Source Code Pro";
+}
+.create_submit{
+    width: 150px;
+    height: 30px;
+    background-color: var(--button-color);
+    transition: all .2s linear;
+    border: 0;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.create_submit:hover{
+    transform: scale(1.1);
+}
+.create_submit:active{
+    transform: scale(1.1);
+}
+.create_close{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    border: 1px solid black;
+    background: transparent;
+    border-radius: 3px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    transition: all .2s;
+}
+.create_close:hover{
+    border: 1px solid var(--main-color);
+}
+.create_close:hover > svg > path{
+    transition: all .2s;
+    fill: var(--main-color);
+}
+.create_select{
+    width: 100%;
+    border-bottom: 1px solid var(--select-border);
+    border-radius: 0.25em;
+    padding-left: 2px;
+    cursor: pointer;
+    background-color: transparent;
+    font-size: 12px;
+    height: 30px;
+}
+.create_select::-ms-expand {
+    display: none;
+}
+.error_list{
+    margin: 0;
+    padding-left: 15px;
+}
+.error_header{
+    color: red;
+}
+.error{
+    font-size: 12px;
+    color: red;
+}
+.service_error{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: red;
+    font-size: 12px;
 }
