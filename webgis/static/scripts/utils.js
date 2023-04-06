@@ -13,3 +13,17 @@ export const icons = {
     iconUrl: '../static/images/icon-selected.png',
   })
 };
+export const errorMessage = {
+  appError: "This application is temporarily unavailable",
+  moveError: "Move service is temporarily unavailable",
+  deleteError: "Delete service is temporarily unavailable",
+  updateError: "Update service is temporarily unavailable",
+  createError: "Create service is temporarily unavailable",
+  noName: "Enter a name",
+  noType: "Select a type"
+};
+export const infoMessage = {
+  clickMove: "And now click where to move",
+  clickObject: "Click on the object",
+  clickMap: "Click on the map",
+};

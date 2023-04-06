@@ -88,7 +88,6 @@ export async function updateObject(fid, form){
     body: JSON.stringify(params)
   }
   const data = await fetch(`/api/objects/update/${fid}`, options);
-  console.log(data.status);
   if(data.status == 200){
     return true;
   }
