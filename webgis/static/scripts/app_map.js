@@ -1,8 +1,5 @@
-const osm_url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-const goo_url = 'http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}';
-const osm_subd = null
-const goo_subd = ['mt0','mt1','mt2','mt3']
-const icon = window.L.icon
+import { getObjects, createObject, moveObject, deleteObject, updateObject } from "./api.js";
+import { icons } from "./utils.js";
 
 var vm = new Vue({
   el: '#app',
@@ -13,6 +10,7 @@ var vm = new Vue({
   },
   data() {
     return {
+      // map parameters
       zoom: 7,
       center: [55.527612, 51.387796],
       loading: false,
@@ -21,17 +19,12 @@ var vm = new Vue({
       tile: 'osm',
       osm: true,
       google: false,
-      icon: icon({
-        iconSize: [20, 20],
-        iconAnchor: [13, 27],
-        popupAnchor:  [1, -24],
-        iconUrl: '../static/images/marker-icon.png',
-      }),
       types: [],
       filterValues: [],
 
       createState: false,
       moveState: false,
+      readyToMove: "",
       deleteState: false,
       helpText: "",
 
@@ -48,25 +41,48 @@ var vm = new Vue({
         Y: ""
       },
       errors: [],
-      serviceError: ""
+      serviceError: "",
+      deleteMenu: false,
+      objectToDelete: null,
+      objectToUpdate: null,
+      detailMenu: false
     }
   },
   methods: {
-    pushToFilterValues(value){
-      if(!this.filterValues.includes(value)){
-        this.filterValues.push(value);
-        console.log(this.filterValues);
+
+    // mems data
+    async reloadObjects(){
+      this.loading = true;
+      const memsData = await getObjects();
+      if(memsData){
+        localStorage.setItem("points", JSON.stringify(memsData));
+        this.geojson = JSON.parse(localStorage.getItem("points"));
+        this.types = this.getTypes(this.geojson);
+      }else{
+        this.serviceError = "This application is temporarily unavailable"
       }
+      this.loading = false;
     },
     onEachFeatureFunction(feature, layer) {
-      layer.setIcon(this.icon);
+      layer.setIcon(icons.iconStable);
       layer.bindTooltip(
         "<div class='font'>" +
           feature.properties.name +
           "</div>",
         { permanent: false, sticky: true }
       );
+      layer.on({
+        click: this.objectClickHandler
+      });
+      layer.on("mouseover", function(e){
+        layer.setIcon(icons.iconSelected);
+      });
+      layer.on("mouseout", function(e){
+        layer.setIcon(icons.iconStable);
+      });
     },
+
+    // filters
     getTypes(points){
       const result = []
       points.features.forEach(element => {
@@ -76,6 +92,28 @@ var vm = new Vue({
       });
       return result;
     },
+    pushToFilterValues(value){
+      if(!this.filterValues.includes(value)){
+        this.filterValues.push(value);
+      }
+    },
+
+    // map and objects click
+    objectClickHandler(e){
+      const fid = e.target.feature.id
+      if(this.moveState){
+        this.readyToMove = fid;
+        this.helpText = "And now click where to move";
+        this.$refs.map.$el.classList.add("leaflet-crosshair");
+      }else if(this.deleteState){
+        this.deleteState = false;
+        this.deleteMenu = true;
+        this.objectToDelete = fid;
+      }else{
+        this.detailMenuHandler(fid)
+
+      }
+    },
     clickHandler(event){
       if(this.createState){
         if (!this.pointSelected){
@@ -83,21 +121,100 @@ var vm = new Vue({
         }
         this.createForm = true;
         this.pointSelected = true;
+      }else if(this.readyToMove){
+        this.move(this.readyToMove, event.latlng.lat, event.latlng.lng)
       }
     },
+
+    // create-move-delete
+    async create(){
+      this.createForm = false;
+      const isCreated = await createObject(this.form);
+      if(isCreated){
+        await this.reloadObjects();
+        this.pointSelected = false;
+      }else{
+        this.serviceError = "Move service is temporarily unavailable"
+      }
+    },
+    async move(fid, x, y){
+      this.loading =true;
+      const isMoved = await moveObject(fid, x, y);
+      if(isMoved){
+        await this.reloadObjects();
+      }else{
+        this.serviceError = "Move service is temporarily unavailable"
+      }
+      this.$refs.map.$el.classList.remove("leaflet-crosshair");
+      this.readyToMove = "";
+      this.helpText = "Click on the object";
+      this.loading = false; 
+    },
+    async delete(){
+      this.loading = true;
+      const isDeleted = await deleteObject(this.objectToDelete);
+      if(isDeleted){
+        await this.reloadObjects();
+      }else{
+        this.serviceError = "Delete service is temporarily unavailable"
+      }
+      this.loading = false;
+    },
+    // delete confirm 
+    deleteMenuSelection(solution){
+      if(solution == "yes"){
+        this.delete();
+      }
+      this.deleteMenu = false;
+      this.objectToDelete = null;
+    },
+
+    // detail menu
+    detailMenuHandler(fid){
+      this.detailMenu = true;
+      const features = JSON.parse(localStorage.getItem("points")).features;
+      const feature = features.filter(element => (fid == element.id));
+      this.fillForm(feature[0])
+      this.objectToUpdate = fid;
+    },
+
+    // forms
     async submit() {
-      if(this.validate()){
+      if(this.validate){
         this.loading = true;
         this.errors = [];
-        result = await this.createNewObject();
-        if(result.status == 201){
-          await this.reloadObjects();
-        }else{
-          this.serviceError = "Service is temporarily unavailable"
-        }
-        this.loading = false;
+        await this.create().then(this.loading = false);
       }
-      
+    },
+    async submitUpdates(){
+      this.detailMenu = false;
+      this.loading = true;
+      const isUpdated = await updateObject(this.objectToUpdate, this.form);
+      if(isUpdated){
+        this.clearForm;
+        this.detailMenu = false;
+        await this.reloadObjects()
+      }else{
+        this.detailMenu = false;
+        this.serviceError = "Update service is temporarily unavailable"
+      }
+      this.loading = false;
+    },
+    fillForm(feature){
+      this.form.name = feature.properties.name
+      this.form.district = feature.properties.district
+      this.form.type = feature.properties.type
+      this.form.av_order = feature.properties.av_order
+      this.form.notes = feature.properties.notes
+    },
+
+    
+  },
+  computed: {
+    options() {
+      return {
+        onEachFeature: this.onEachFeatureFunction,
+      };
     },
     validate(){
       if(this.clickLatLng){
@@ -114,56 +231,16 @@ var vm = new Vue({
       }
       if(!this.form.X || !this.form.Y){
         this.errors = [];
-        this.errors.push("This service is temporarily unavailable")
+        this.errors.push("Create service is temporarily unavailable")
       }
       return !this.errors.length
 
     },
-    async createNewObject(){
-      this.createForm = false;
-      const params ={
-        "name": this.form.name,
-        "region": 16,
-        "district": this.form.district,
-        "type": this.form.type,
-        "av_order": this.form.av_order,
-        "status": "regional",
-        "pos": 0,
-        "notes": this.form.notes,
-        "x": this.form.X,
-        "y": this.form.Y
-      }
-      const options = {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(params)
-      }
-      data = await fetch('/api/objects/create', options);
-      return data;
-    },
-    async reloadObjects(){
-      const response = await fetch("/api/objects/");
-      if(response.status == 200){
-        const data = await response.json();
-        localStorage.setItem("points", JSON.stringify(data));
-        this.geojson = JSON.parse(localStorage.getItem("points"));
-        this.types = this.getTypes(this.geojson);
-        return true;
-      }else{
-        this.serviceError = "This application is temporarily unavailable"
-        return false;
-      }
+    clearForm(){
+        Object.keys(this.form).forEach(key => {
+        this.form[key] = "";
+      });
     }
-  },
-  computed: {
-    options() {
-      return {
-        onEachFeature: this.onEachFeatureFunction,
-      };
-    },
   },
   watch: {
     tile() {
@@ -191,8 +268,12 @@ var vm = new Vue({
       if (this.createState){
         this.moveState = false
         this.deleteState = false
+        this.readyToMove = ""
         this.helpText = "Click on the map"
         console.log(this.$refs.map)
+        this.$refs.map.$el.classList.add("leaflet-crosshair");
+      }else{
+        this.$refs.map.$el.classList.remove("leaflet-crosshair");
       }
     },
     moveState(){
@@ -207,6 +288,7 @@ var vm = new Vue({
       if (this.deleteState){
         this.createState = false
         this.moveState = false
+        this.readyToMove = ""
         this.helpText = "Click on the object"
       }
       
@@ -214,10 +296,6 @@ var vm = new Vue({
     
   },
   async created() {
-    this.loading = true;
-    result = await this.reloadObjects();
-    if(result){
-      this.loading = false;
-    }
+    await this.reloadObjects();
   }
 })
