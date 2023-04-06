@@ -50,6 +50,8 @@ class ObjectsMoveSerializer(serializers.ModelSerializer):
                                help_text="float: WGS-84 E coordinate")
 
     def update(self, instance, validated_data):
+        """ Here client coordinates are converted to geometry and written """
+
         x, y = validated_data.get('x'), validated_data.get('y')
         validated_data["geom"] = geometry_from_xy(x, y)
         validated_data.pop('x', None)

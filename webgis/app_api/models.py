@@ -2,6 +2,11 @@ from django.contrib.gis.db import models
 
 
 class Mems(models.Model):
+    """
+    Mems model contains information about memorial and
+    spatial description (geom)
+    """
+
     fid = models.AutoField(db_column='FID', primary_key=True,
                            help_text='int: feature id')
     geom = models.GeometryField(blank=True, null=True)

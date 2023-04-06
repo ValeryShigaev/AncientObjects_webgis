@@ -46,6 +46,7 @@ class ObjectsMove(generics.UpdateAPIView):
 
 
 class ObjectsDelete(generics.DestroyAPIView):
+    """ Deleting an object """
 
     serializer_class = ObjectsDeleteSerializer
     queryset = Mems.objects.all()
